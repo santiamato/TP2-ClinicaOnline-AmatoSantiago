@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Usuarios</title>
+</head>
+<body>
+    <section class="filtro">
+        <input placeholder="Buscar por nombre, mail o rol" [value]="filtro()" (input)="filtro.set($any($event.target).value)" />
+    </section>
+
+    <section class="lista">
+        <div class="item cab">
+            <div>Nombre</div>
+            <div>Correo</div>
+            <div>Rol</div>
+            <div>Verificado</div>
+            <div>Aprobado</div>
+        </div>
+        <div class="item" *ngFor="let u of vistos()">
+            <div>{{u.nombre}} {{u.apellido}}</div>
+            <div>{{u.mail}}</div>
+            <div>{{u.rol}}</div>
+            <div>
+                {{ u.rol==='administrador' ? 'Si' : ($any(u).verificado ? 'Si' : 'No') }}
+            </div>
+            <div>
+                <ng-container *ngIf="u.rol==='especialista'; else guion">
+                    <label class="switch"><input type="checkbox" [checked]="$any(u).aprobado" (change)="toggleAprobado(u)"><span></span></label>
+                </ng-container>
+                <ng-template #guion>-</ng-template>
+            </div>
+        </div>
+    </section>
+
+    <section class="crear">
+        <h3>Crear nuevo usuario</h3>
+        <div class="error" *ngIf="mensaje()">{{ mensaje() }}</div>
+        <div class="info" *ngIf="creado()">
+            <div class="banner">
+                <strong *ngIf="creado()?.rol!=='administrador'; else adminMsg">
+                    Registro creado. Te enviamos un mail para verificar tu cuenta.
+                </strong>
+                <ng-template #adminMsg>
+                    <strong>Usuario administrador creado correctamente.</strong>
+                </ng-template>
+            </div>
+        </div>
+        <div class="conmutador">
+            <button class="btn" [class.primario]="rolNuevo()==='paciente'" (click)="rolNuevo.set('paciente')">Paciente</button>
+            <button class="btn" [class.primario]="rolNuevo()==='especialista'" (click)="rolNuevo.set('especialista')">Especialista</button>
+            <button class="btn" [class.primario]="rolNuevo()==='administrador'" (click)="rolNuevo.set('administrador')">Administrador</button>
+        </div>
+
+        <form *ngIf="rolNuevo()==='paciente'" [formGroup]="fPaciente" (ngSubmit)="crear()" class="grid">
+            <label>
+                <span>Nombre</span>
+                <input formControlName="nombre" />
+                <small class="error" *ngIf="fPaciente.get('nombre')?.invalid && fPaciente.get('nombre')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Apellido</span>
+                <input formControlName="apellido" />
+                <small class="error" *ngIf="fPaciente.get('apellido')?.invalid && fPaciente.get('apellido')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Edad</span>
+                <input type="number" formControlName="edad" />
+                <small class="error" *ngIf="fPaciente.get('edad')?.invalid && fPaciente.get('edad')?.touched">Edad invalida.</small>
+            </label>
+            <label>
+                <span>DNI</span>
+                <input formControlName="dni" />
+                <small class="error" *ngIf="fPaciente.get('dni')?.invalid && fPaciente.get('dni')?.touched">Debe ser un DNI valido (8 numeros).</small>
+            </label>
+            <label>
+                <span>Obra Social</span>
+                <input formControlName="obraSocial" />
+                <small class="error" *ngIf="fPaciente.get('obraSocial')?.invalid && fPaciente.get('obraSocial')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Correo</span>
+                <input type="email" formControlName="mail" />
+                <small class="error" *ngIf="fPaciente.get('mail')?.invalid && fPaciente.get('mail')?.touched">Correo invalido.</small>
+            </label>
+            <label>
+                <span>Contraseña</span>
+                <input type="password" formControlName="contrasenia" />
+                <small class="error" *ngIf="fPaciente.get('contrasenia')?.invalid && fPaciente.get('contrasenia')?.touched">Debe tener minimo 6 caracteres.</small>
+            </label>
+            <label>
+                <span>Imagen 1</span>
+                <input type="file" (change)="onArchivo($event,'imagen1')" accept="image/*" />
+                <small class="error" *ngIf="fPaciente.get('imagen1')?.invalid && fPaciente.get('imagen1')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Imagen 2</span>
+                <input type="file" (change)="onArchivo($event,'imagen2')" accept="image/*" />
+                <small class="error" *ngIf="fPaciente.get('imagen2')?.invalid && fPaciente.get('imagen2')?.touched">Campo requerido.</small>
+            </label>
+            <button class="btn primario col-span" type="submit">Crear paciente</button>
+        </form>
+
+        <form *ngIf="rolNuevo()==='especialista'" [formGroup]="fEspecialista" (ngSubmit)="crear()" class="grid">
+            <label>
+                <span>Nombre</span>
+                <input formControlName="nombre" />
+                <small class="error" *ngIf="fEspecialista.get('nombre')?.invalid && fEspecialista.get('nombre')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Apellido</span>
+                <input formControlName="apellido" />
+                <small class="error" *ngIf="fEspecialista.get('apellido')?.invalid && fEspecialista.get('apellido')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Edad</span>
+                <input type="number" formControlName="edad" />
+                <small class="error" *ngIf="fEspecialista.get('edad')?.invalid && fEspecialista.get('edad')?.touched">Edad invalida.</small>
+            </label>
+            <label>
+                <span>DNI</span>
+                <input formControlName="dni" />
+                <small class="error" *ngIf="fEspecialista.get('dni')?.invalid && fEspecialista.get('dni')?.touched">Debe ser un DNI valido.</small>
+            </label>
+            <label>
+                <span>Correo</span>
+                <input type="email" formControlName="mail" />
+                <small class="error" *ngIf="fEspecialista.get('mail')?.invalid && fEspecialista.get('mail')?.touched">Correo invalido.</small>
+            </label>
+            <label>
+                <span>Contraseña</span>
+                <input type="password" formControlName="contrasenia" />
+                <small class="error" *ngIf="fEspecialista.get('contrasenia')?.invalid && fEspecialista.get('contrasenia')?.touched">Debe tener minimo 6 caracteres.</small>
+            </label>
+            <label class="col-span">
+                <span>Especialidades</span>
+                <div class="chips">
+                    <label *ngFor="let e of especialidades()" class="chip"><input type="checkbox" [value]="e" (change)="cambiarEspecialidadAdmin(e, $any($event.target).checked)"> {{e}}</label>
+                </div>
+                <small class="error" *ngIf="fEspecialista.touched && fEspecialista.errors?.['especialidadRequerida']">Seleccione al menos una especialidad o ingrese una nueva.</small>
+            </label>
+            <label class="col-span">
+                <span>Agregar nueva especialidad</span>
+                <input formControlName="nuevaEspecialidad" placeholder="Ej: Neurologia" />
+            </label>
+            <label class="col-span">
+                <span>Imagen de perfil</span>
+                <input type="file" (change)="onArchivo($event,'imagen')" accept="image/*" />
+                <small class="error" *ngIf="fEspecialista.get('imagen')?.invalid && fEspecialista.get('imagen')?.touched">Campo requerido.</small>
+            </label>
+            <button class="btn primario col-span" type="submit">Crear especialista</button>
+        </form>
+
+        <form *ngIf="rolNuevo()==='administrador'" [formGroup]="fAdmin" (ngSubmit)="crear()" class="grid">
+            <label>
+                <span>Nombre</span>
+                <input formControlName="nombre" />
+                <small class="error" *ngIf="fAdmin.get('nombre')?.invalid && fAdmin.get('nombre')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Apellido</span>
+                <input formControlName="apellido" />
+                <small class="error" *ngIf="fAdmin.get('apellido')?.invalid && fAdmin.get('apellido')?.touched">Campo requerido.</small>
+            </label>
+            <label>
+                <span>Edad</span>
+                <input type="number" formControlName="edad" />
+                <small class="error" *ngIf="fAdmin.get('edad')?.invalid && fAdmin.get('edad')?.touched">Edad invalida.</small>
+            </label>
+            <label>
+                <span>DNI</span>
+                <input formControlName="dni" />
+                <small class="error" *ngIf="fAdmin.get('dni')?.invalid && fAdmin.get('dni')?.touched">Debe ser un DNI valido (8 numeros).</small>
+            </label>
+            <label>
+                <span>Correo</span>
+                <input type="email" formControlName="mail" />
+                <small class="error" *ngIf="fAdmin.get('mail')?.invalid && fAdmin.get('mail')?.touched">Correo invalido.</small>
+            </label>
+            <label>
+                <span>Contraseña</span>
+                <input type="password" formControlName="contrasenia" />
+                <small class="error" *ngIf="fAdmin.get('contrasenia')?.invalid && fAdmin.get('contrasenia')?.touched">Debe tener minimo 6 caracteres.</small>
+            </label>
+            <label class="col-span">
+                <span>Imagen</span>
+                <input type="file" (change)="onArchivo($event,'imagen')" accept="image/*" />
+                <small class="error" *ngIf="fAdmin.get('imagen')?.invalid && fAdmin.get('imagen')?.touched">Campo requerido.</small>
+            </label>
+            <button class="btn primario col-span" type="submit">Crear administrador</button>
+        </form>
+    </section>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<section class="selector-inicial" *ngIf="tipo() === null">
+
+  <button class="opcion" (click)="tipo.set('paciente')">
+    <img src="foto_paciente.webp" alt="Paciente">
+    <span>Paciente</span>
+  </button>
+
+  <button class="opcion" (click)="tipo.set('especialista')">
+    <img src="foto_especialista.jpg" alt="Especialista">
+    <span>Especialista</span>
+  </button>
+
+</section>
+
+
+<section class="tarjeta" *ngIf="tipo()==='paciente'">
+  <h2>Registro de Paciente</h2>
+  <form [formGroup]="formPaciente" (ngSubmit)="registrar()" novalidate>
+    <div class="grid">
+
+      <label>
+        <span>Nombre</span>
+        <input formControlName="nombre" />
+        <small class="error" *ngIf="formPaciente.get('nombre')?.invalid && formPaciente.get('nombre')?.touched">Campo requerido.</small>
+      </label>
+
+      <label>
+        <span>Apellido</span>
+        <input formControlName="apellido" />
+        <small class="error" *ngIf="formPaciente.get('apellido')?.invalid && formPaciente.get('apellido')?.touched">Campo requerido.</small>
+      </label>
+
+      <label>
+        <span>Edad</span>
+        <input type="number" formControlName="edad" />
+        <small class="error" *ngIf="formPaciente.get('edad')?.invalid && formPaciente.get('edad')?.touched">Edad invalida.</small>
+      </label>
+
+      <label>
+        <span>DNI</span>
+        <input formControlName="dni" />
+        <small class="error" *ngIf="formPaciente.get('dni')?.invalid && formPaciente.get('dni')?.touched">Debe ser un DNI valido (8 numeros).</small>
+      </label>
+
+      <label>
+        <span>Obra Social</span>
+        <input formControlName="obraSocial" />
+        <small class="error" *ngIf="formPaciente.get('obraSocial')?.invalid && formPaciente.get('obraSocial')?.touched">Campo requerido.</small>
+      </label>
+
+      <label>
+        <span>Correo</span>
+        <input type="email" formControlName="mail" />
+        <small class="error" *ngIf="formPaciente.get('mail')?.invalid && formPaciente.get('mail')?.touched">Correo invalido.</small>
+        <div *ngIf="info" class="error">
+          {{ info }}
+        </div>
+      </label>
+
+      <label>
+        <span>Contraseña</span>
+        <input type="password" formControlName="contrasenia" />
+        <small class="error" *ngIf="formPaciente.get('contrasenia')?.invalid && formPaciente.get('contrasenia')?.touched">
+          Debe tener minimo 6 caracteres.
+        </small>
+      </label>
+
+      <label>
+        <span>Imagen 1</span>
+        <input type="file" (change)="onArchivo($event,'imagen1')" accept="image/*" />
+        <small class="error" *ngIf="formPaciente.get('imagen1')?.invalid && formPaciente.get('imagen1')?.touched">Campo requerido.</small>
+      </label>
+
+      <label>
+        <span>Imagen 2</span>
+        <input type="file" (change)="onArchivo($event,'imagen2')" accept="image/*" />
+        <small class="error" *ngIf="formPaciente.get('imagen2')?.invalid && formPaciente.get('imagen2')?.touched">Campo requerido.</small>
+      </label>
+
+    </div>
+    <button class="btn primario" type="submit">Crear cuenta</button>
+  </form>
+
+  <div class="info" *ngIf="creado()?.rol==='paciente'">
+    <div class="banner">
+      <strong>Registro creado. Te enviamos un mail para verificar tu cuenta.</strong>
+    </div>
+  </div>
+</section>
+
+<section class="tarjeta" *ngIf="tipo()==='especialista'">
+  <h2>Registro de Especialista</h2>
+  <form [formGroup]="formEspecialista" (ngSubmit)="registrar()" novalidate>
+    <div class="grid">
+
+      <label>
+        <span>Nombre</span>
+        <input formControlName="nombre" />
+        <small class="error" *ngIf="formEspecialista.get('nombre')?.invalid && formEspecialista.get('nombre')?.touched">Campo requerido.</small>
+      </label>
+
+      <label>
+        <span>Apellido</span>
+        <input formControlName="apellido" />
+        <small class="error" *ngIf="formEspecialista.get('apellido')?.invalid && formEspecialista.get('apellido')?.touched">Campo requerido.</small>
+      </label>
+
+      <label>
+        <span>Edad</span>
+        <input type="number" formControlName="edad" />
+        <small class="error" *ngIf="formEspecialista.get('edad')?.invalid && formEspecialista.get('edad')?.touched">Edad invalida.</small>
+      </label>
+
+      <label>
+        <span>DNI</span>
+        <input formControlName="dni" />
+        <small class="error" *ngIf="formEspecialista.get('dni')?.invalid && formEspecialista.get('dni')?.touched">Debe ser un DNI valido.</small>
+      </label>
+
+      <label>
+        <span>Correo</span>
+        <input type="email" formControlName="mail" />
+        <small class="error" *ngIf="formEspecialista.get('mail')?.invalid && formEspecialista.get('mail')?.touched">Correo invalido.</small>
+        <div *ngIf="info" class="error">
+          {{ info }}
+        </div>
+      </label>
+
+      <label>
+        <span>Contraseña</span>
+        <input formControlName="contrasenia" type="password" />
+        <small class="error" *ngIf="formEspecialista.get('contrasenia')?.invalid && formEspecialista.get('contrasenia')?.touched">
+          Debe tener minimo 6 caracteres.
+        </small>
+      </label>
+
+      <label class="col-span">
+        <span>Especialidades</span>
+        <div class="chips">
+          <label *ngFor="let e of especialidades()" class="chip">
+            <input type="checkbox" [value]="e" (change)="cambiarEspecialidad(e, $any($event.target).checked)"> {{e}}
+          </label>
+        </div>
+        <small class="error" *ngIf="formEspecialista.touched && formEspecialista.errors?.['especialidadRequerida']">Seleccione al menos una especialidad o ingrese una nueva.</small>
+      </label>
+
+      <label class="col-span">
+        <span>Agregar nueva especialidad</span>
+        <input formControlName="nuevaEspecialidad" placeholder="Ej: Neurologia" />
+      </label>
+
+      <label class="col-span">
+        <span>Imagen de perfil</span>
+        <input type="file" (change)="onArchivo($event,'imagen')" accept="image/*" />
+        <small class="error" *ngIf="formEspecialista.get('imagen')?.invalid && formEspecialista.get('imagen')?.touched">Campo requerido.</small>
+      </label>
+
+    </div>
+
+    <button class="btn primario" type="submit">Crear cuenta</button>
+    <p class="ayuda">Un administrador debera aprobar tu cuenta antes de ingresar.</p>
+  </form>
+
+  <div class="info" *ngIf="creado()?.rol==='especialista'">
+    <div class="banner">
+      <strong>Registro creado. Te enviamos un mail para verificar tu cuenta.</strong>
+    </div>
+  </div>
+</section>

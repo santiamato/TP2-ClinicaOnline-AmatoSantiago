@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Clinica Santa Ana</title>
+    
+    
+</head>
+<body>
+    <section class="tarjeta">
+        <h2>Ingresar</h2>
+        <form [formGroup]="form" (ngSubmit)="acceder()" novalidate>
+            <label>
+                <span>Correo</span>
+                <input type="email" formControlName="mail" placeholder="Pepe@mail.com" />
+            </label>
+            <div class="error" *ngIf="form.controls.mail.touched && form.controls.mail.invalid">Correo invalido</div>
+
+            <label>
+                <span>Contraseña</span>
+                <input type="password" formControlName="contrasenia" placeholder="minimo 6 caracteres" />
+            </label>
+            <div class="error" *ngIf="form.controls.contrasenia.touched && form.controls.contrasenia.invalid">Contraseña invalida</div>
+
+            <button class="btn primario" type="submit">Entrar</button>
+            <div class="error" *ngIf="error">{{ error }}</div>
+        </form>
+    </section>
+
+    <div class="rapido">
+        <span>Acceso rapido:</span>
+        <button class="acceso" (click)="accesoRapido('pac1')" style="background-image: url('foto_paciente1.jpeg')">Pac1</button>
+        <button class="acceso" (click)="accesoRapido('pac2')" style="background-image: url('foto_persona2.jpeg')">Pac2</button>
+        <button class="acceso" (click)="accesoRapido('pac3')" style="background-image: url('foto_persona3.jpeg')">Pac3</button>
+
+        <button class="acceso" (click)="accesoRapido('esp1')" style="background-image: url('foto_doc1.jpeg')">Esp1</button>
+        <button class="acceso" (click)="accesoRapido('esp2')" style="background-image: url('foto_doc2.jpeg')">Esp2</button>
+
+        <button class="acceso" (click)="accesoRapido('admin')" style="background-image: url('foto_admin.jpg')">Admin</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,352 @@
+﻿body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .conmutador {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: 2px solid #0e6ba8;
+            border-radius: 8px;
+            background: #fff;
+            color: #0e6ba8;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #e3f2fd;
+            transform: translateY(-2px);
+        }
+
+        .btn.primario {
+            background: #0e6ba8;
+            color: #fff;
+            border-color: #0e6ba8;
+        }
+
+        .btn.primario:hover {
+            background: #084d6b;
+        }
+
+        .tarjeta {
+            width: 100%;
+            max-width: 600px;
+            padding: 24px;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(14, 107, 168, 0.1);
+            margin-bottom: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            overflow: hidden;
+        }
+
+        .tarjeta h2 {
+            margin: 0 0 16px 0;
+            color: #0e6ba8;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+        }
+
+        label span {
+            display: block;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #d5e3f0;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #0e6ba8;
+            box-shadow: 0 0 0 2px rgba(14, 107, 168, 0.2);
+        }
+
+        .error {
+            color: red;
+            font-size: 0.8rem;
+        }
+
+        input.ng-invalid.ng-touched {
+            border-color: #dc2626;
+        }
+
+        .col-span {
+            grid-column: span 2;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            border: 1px solid #d5e3f0;
+            padding: 10px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            background: #f8fafc;
+            transition: background 0.3s ease;
+        }
+
+        .chip:hover {
+            background: #e3f2fd;
+        }
+
+        .ayuda {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        .info .banner {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            background: #ecfeff;
+            border: 1px solid #bae6fd;
+            color: #075985;
+            padding: 16px 18px;
+            border-radius: 12px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .col-span {
+                grid-column: auto;
+            }
+            .conmutador {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tarjeta {
+                padding: 16px;
+            }
+        }
+
+        .selector-inicial {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            height: 70vh; 
+        }
+
+        .opcion {
+            width: 500px;
+            height: 500px;
+            border-radius: 20px;
+            border: 3px solid #0e6ba8;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        .opcion img {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #0e6ba8;
+            background: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .opcion span {
+            font-size: 40px;
+            font-weight: 600;
+            color: #0e6ba8;
+        }
+
+        .opcion:hover {
+            transform: translateY(-8px) scale(1.03);
+            background: #e3f2fd;
+            box-shadow: 0 12px 26px rgba(14, 107, 168, 0.25);
+        }
+
+        /* Mobile: una debajo de otra */
+        @media (max-width: 700px) {
+            .selector-inicial {
+                flex-direction: column;
+                gap: 30px;
+                height: auto;
+                margin-top: 40px;
+            }
+
+            .opcion {
+                width: 200px;
+                height: 200px;
+            }
+
+            .opcion img {
+                width: 90px;
+                height: 90px;
+            }
+        }
+
+        /* Estilos adicionales para el HTML proporcionado */
+        .filtro {
+            margin-bottom: 20px;
+        }
+
+        .filtro input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #d5e3f0;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .filtro input:focus {
+            border-color: #0e6ba8;
+            box-shadow: 0 0 0 2px rgba(14, 107, 168, 0.2);
+        }
+
+        .lista {
+            margin-bottom: 20px;
+        }
+
+.item {
+            display: grid;
+            /* Columnas fijas y consistentes para alinear todos los registros */
+            grid-template-columns:
+                minmax(180px, 2fr)   /* Nombre */
+                minmax(240px, 2fr)   /* Mail */
+                minmax(110px, 1fr)   /* Rol */
+                minmax(120px, 1fr)   /* Verificado */
+                minmax(120px, 1fr)   /* Aprobado */
+                minmax(120px, 1fr);  /* Habilitado */
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #d5e3f0;
+            align-items: center;
+        }
+
+        /* Evitar saltos de linea que desalinean y recortar con elipsis */
+        .item > div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .item.cab {
+            font-weight: bold;
+            background: #f8fafc;
+            border-bottom: 2px solid #0e6ba8;
+        }
+
+        .crear {
+            padding: 24px;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(14, 107, 168, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .crear h3 {
+            margin: 0 0 16px 0;
+            color: #0e6ba8;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Estilo para el switch (toggle) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch span {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .switch span:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .switch input:checked + span {
+            background-color: #0e6ba8;
+        }
+
+        .switch input:checked + span:before {
+            transform: translateX(26px);
+        }

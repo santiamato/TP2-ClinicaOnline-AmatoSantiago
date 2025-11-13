@@ -1,0 +1,250 @@
+﻿body {
+    margin: 0;
+    padding: 80px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.conmutador {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: 2px solid #0e6ba8;
+    border-radius: 8px;
+    background: #fff;
+    color: #0e6ba8;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #e3f2fd;
+    transform: translateY(-2px);
+}
+
+.btn.primario {
+    background: #0e6ba8;
+    color: #fff;
+    border-color: #0e6ba8;
+}
+
+.btn.primario:hover {
+    background: #084d6b;
+}
+
+.tarjeta {
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(14, 107, 168, 0.1);
+    overflow: hidden;
+    text-align: center;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta h2 {
+    margin: 0 0 20px 0;
+    color: #0e6ba8;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex: 1;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+label span {
+    display: block;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #d5e3f0;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+    border-color: #0e6ba8;
+    box-shadow: 0 0 0 2px rgba(14, 107, 168, 0.2);
+}
+
+input.ng-invalid.ng-touched {
+    border-color: #dc2626;
+}
+
+.error {
+    color: #dc2626;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.col-span {
+    grid-column: span 2;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.chip {
+    border: 1px solid #d5e3f0;
+    padding: 10px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    background: #f8fafc;
+    transition: background 0.3s ease;
+}
+
+.chip:hover {
+    background: #e3f2fd;
+}
+
+.ayuda {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 12px;
+    font-style: italic;
+}
+
+.info .banner {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    background: #ecfeff;
+    border: 1px solid #bae6fd;
+    color: #075985;
+    padding: 16px 18px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.rapido {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    height: 560px;
+}
+
+.rapido span {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #475569;
+    font-size: 16px;
+}
+
+.acceso {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #0e6ba8;
+    border-radius: 12px;
+    background: #fff;
+    background-size: cover;
+    background-position: center;
+    color: black;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 5px;
+    text-decoration: none;
+}
+
+.acceso:hover {
+    background-color: #e3f2fd;
+    transform: translateY(-2px);
+    border-color: #084d6b;
+}
+
+@media (max-width: 800px) {
+    body {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    .col-span {
+        grid-column: auto;
+    }
+    .conmutador {
+        flex-direction: column;
+        align-items: center;
+    }
+    .tarjeta {
+        padding: 16px;
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+    .rapido {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        height: auto;
+    }
+    .acceso {
+        width: 60px;
+        height: 60px;
+    }
+    form {
+        justify-content: flex-start;
+        flex: none;
+    }
+}
