@@ -8,6 +8,9 @@
 <body>
     <section class="filtro">
         <input placeholder="Buscar por nombre, mail o rol" [value]="filtro()" (input)="filtro.set($any($event.target).value)" />
+        <div class="acciones" *ngIf="esAdmin()">
+            <button class="btn primario" type="button" (click)="descargarUsuarios()">Descargar excel de usuarios</button>
+        </div>
     </section>
 
     <section class="lista">
@@ -17,6 +20,7 @@
             <div>Rol</div>
             <div>Verificado</div>
             <div>Aprobado</div>
+            <div>Historia</div>
         </div>
         <div class="item" *ngFor="let u of vistos()">
             <div>{{u.nombre}} {{u.apellido}}</div>
@@ -30,6 +34,30 @@
                     <label class="switch"><input type="checkbox" [checked]="$any(u).aprobado" (change)="toggleAprobado(u)"><span></span></label>
                 </ng-container>
                 <ng-template #guion>-</ng-template>
+            </div>
+            <div>
+                <button class="btn" type="button" *ngIf="u.rol==='paciente'" (click)="verHistoriaPaciente(u)">Ver historia</button>
+                <span *ngIf="u.rol!=='paciente'">-</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="historia" *ngIf="pacienteHistoria() as pac">
+        <h3>Historia clínica de {{ pac.nombre }} {{ pac.apellido }}</h3>
+        <p class="aviso" *ngIf="!historias().length">No hay registros aún.</p>
+        <div class="entrada" *ngFor="let h of historias()">
+            <div class="cabecera">
+                <strong>{{ h.fecha | date:'short' }}</strong>
+                <span>Especialista: {{ h.especialistaNombre }}</span>
+            </div>
+            <div class="datos">
+                <span>Altura: {{ h.altura }} cm</span>
+                <span>Peso: {{ h.peso }} kg</span>
+                <span>Temperatura: {{ h.temperatura }} °C</span>
+                <span>Presión: {{ h.presion }}</span>
+            </div>
+            <div class="extras" *ngIf="h.extra1 || h.extra2 || h.extra3">
+                <strong>Datos extra:</strong> {{ extrasTexto(h) }}
             </div>
         </div>
     </section>

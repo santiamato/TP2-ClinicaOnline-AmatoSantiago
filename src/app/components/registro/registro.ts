@@ -1,12 +1,15 @@
-﻿import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UsuariosService } from '../../servicios/usuarios';
+import { UsuariosService, Usuario } from '../../servicios/usuarios';
 import { EspecialidadesService } from '../../servicios/especialidades';
 import { CargaService } from '../../servicios/core';
-import { Usuario } from '../../servicios/usuarios';
 import { SupabaseService } from '../../servicios/supabase';
+
+declare const grecaptcha: any;
+
+type TipoUsuario = 'paciente' | 'especialista';
 
 @Component({
   standalone: true,
@@ -23,10 +26,32 @@ export class Registro {
   especialidadesSrv = inject(EspecialidadesService);
   supabase = inject(SupabaseService);
 
-  tipo = signal<'paciente' | 'especialista' | null>(null);
+  tipo = signal<TipoUsuario | null>(null);
   especialidades = signal<string[]>([]);
   creado = signal<Usuario | null>(null);
+  captchaToken = signal('');
+  captchaError = signal('');
   info = '';
+
+  private siteKey = '6Lcr9wssAAAAAON6j5nIXFl0HWJYJUTqtm_8jsJZ';
+  private recaptchaLoader: Promise<void> | null = null;
+  private captchaWidgets: Record<TipoUsuario, number | null> = { paciente: null, especialista: null };
+  private captchaElements: Record<TipoUsuario, HTMLElement | null> = { paciente: null, especialista: null };
+  private captchaOrigen: TipoUsuario | null = null;
+
+  @ViewChild('captchaPaciente') set captchaPacienteRef(ref: ElementRef<HTMLDivElement> | undefined) {
+    if (ref) {
+      this.captchaElements.paciente = ref.nativeElement;
+      this.renderCaptcha('paciente');
+    }
+  }
+
+  @ViewChild('captchaEspecialista') set captchaEspecialistaRef(ref: ElementRef<HTMLDivElement> | undefined) {
+    if (ref) {
+      this.captchaElements.especialista = ref.nativeElement;
+      this.renderCaptcha('especialista');
+    }
+  }
 
   constructor() {
     (async () => {
@@ -60,8 +85,18 @@ export class Registro {
     imagen: [null as File | null, Validators.required],
   }, { validators: [this.validarEspecialidades()] });
 
+  seleccionar(tipo: TipoUsuario) {
+    this.tipo.set(tipo);
+    this.info = '';
+    this.captchaToken.set('');
+    this.captchaOrigen = null;
+    this.captchaError.set('');
+    setTimeout(() => this.renderCaptcha(tipo));
+  }
+
   async registrar() {
     this.info = '';
+    this.captchaError.set('');
     const tipo = this.tipo();
     this.carga.mostrar();
 
@@ -87,9 +122,16 @@ export class Registro {
         return;
       }
 
+      if (!this.captchaToken() || this.captchaOrigen !== tipo) {
+        this.captchaError.set('Complete el captcha para continuar.');
+        this.carga.ocultar();
+        return;
+      }
+
       const existente = await this.usuarios.buscarPorMail(v.mail);
       if (existente) {
-        this.info = 'Ya existe un usuario registrado con ese mail.';
+        this.info = 'Ya existe un usuario registrado con ese correo.';
+        this.resetCaptcha(tipo);
         this.carga.ocultar();
         return;
       }
@@ -140,6 +182,9 @@ export class Registro {
 
       const creado = await this.usuarios.crearUsuario(datos);
       this.creado.set(creado);
+      this.reiniciarFormularios();
+      this.resetCaptcha('paciente');
+      this.resetCaptcha('especialista');
     } catch (e: any) {
       console.error('Error registro:', e);
       this.info = 'Error inesperado. Revise los datos.';
@@ -178,5 +223,74 @@ export class Registro {
       fr.onerror = () => rej(null);
       fr.readAsDataURL(file);
     });
+  }
+
+  private reiniciarFormularios() {
+    this.formPaciente.reset({
+      edad: 18,
+      imagen1: null,
+      imagen2: null,
+    });
+    this.formEspecialista.reset({
+      edad: 25,
+      especialidades: [],
+      nuevaEspecialidad: '',
+      imagen: null,
+    });
+    this.captchaToken.set('');
+    this.captchaOrigen = null;
+  }
+
+  private async renderCaptcha(tipo: TipoUsuario) {
+    const el = this.captchaElements[tipo];
+    if (!el) return;
+    await this.ensureRecaptcha();
+    if (this.captchaWidgets[tipo] !== null) {
+      grecaptcha.reset(this.captchaWidgets[tipo]!);
+    } else {
+      this.captchaWidgets[tipo] = grecaptcha.render(el, {
+        sitekey: this.siteKey,
+        callback: (token: string) => this.onCaptchaSuccess(token, tipo),
+        'expired-callback': () => this.onCaptchaExpired(tipo),
+      });
+    }
+  }
+
+  private resetCaptcha(tipo: TipoUsuario) {
+    const id = this.captchaWidgets[tipo];
+    if (id !== null && (window as any).grecaptcha?.reset) {
+      grecaptcha.reset(id);
+    }
+    if (this.captchaOrigen === tipo) {
+      this.captchaToken.set('');
+      this.captchaOrigen = null;
+    }
+  }
+
+  private onCaptchaSuccess(token: string, tipo: TipoUsuario) {
+    this.captchaToken.set(token);
+    this.captchaOrigen = tipo;
+    this.captchaError.set('');
+  }
+
+  private onCaptchaExpired(tipo: TipoUsuario) {
+    if (this.captchaOrigen === tipo) {
+      this.captchaToken.set('');
+      this.captchaOrigen = null;
+    }
+  }
+
+  private ensureRecaptcha(): Promise<void> {
+    if ((window as any).grecaptcha?.render) return Promise.resolve();
+    if (!this.recaptchaLoader) {
+      this.recaptchaLoader = new Promise(resolve => {
+        const check = () => {
+          if ((window as any).grecaptcha?.render) resolve();
+          else setTimeout(check, 200);
+        };
+        check();
+      });
+    }
+    return this.recaptchaLoader;
   }
 }

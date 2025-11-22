@@ -5,7 +5,9 @@ import { UsuariosService } from '../../servicios/usuarios';
 import { EspecialidadesService } from '../../servicios/especialidades';
 import { Administrador, Especialista, Paciente, Usuario } from '../../servicios/usuarios';
 import { SupabaseService } from '../../servicios/supabase';
-import { CargaService } from '../../servicios/core';
+import { AuthService, CargaService } from '../../servicios/core';
+import { HistoriasClinicasService, HistoriaClinica } from '../../servicios/historias-clinicas';
+import { utils, writeFile } from 'xlsx';
 
 @Component({
   standalone: true,
@@ -19,9 +21,12 @@ export class SeccionUsuarios {
   especialidadesSrv = inject(EspecialidadesService);
   supabase = inject(SupabaseService);
   carga = inject(CargaService);
+  auth = inject(AuthService);
+  historiasSrv = inject(HistoriasClinicasService);
 
   lista = signal<Usuario[]>([]);
   filtro = signal('');
+  esAdmin = computed(() => this.auth.actual()?.rol === 'administrador');
 
   vistos = computed(() => {
     const f = this.filtro().toLowerCase();
@@ -35,6 +40,8 @@ export class SeccionUsuarios {
   especialidades = signal<string[]>([]);
   mensaje = signal('');
   creado = signal<Usuario | null>(null);
+  pacienteHistoria = signal<Usuario | null>(null);
+  historias = signal<HistoriaClinica[]>([]);
 
   constructor() {
     (async () => {
@@ -210,6 +217,62 @@ export class SeccionUsuarios {
     (u as any).aprobado = !(u as any).aprobado;
     await this.usuariosSrv.actualizar(u);
     this.lista.set(await this.usuariosSrv.obtenerTodos());
+  }
+
+  async verHistoriaPaciente(u: Usuario) {
+    if (u.rol !== 'paciente') {
+      this.pacienteHistoria.set(null);
+      this.historias.set([]);
+      return;
+    }
+    try {
+      this.carga.mostrar();
+      const lista = await this.historiasSrv.listarPorPaciente(u.id);
+      this.pacienteHistoria.set(u);
+      this.historias.set(lista);
+      this.mensaje.set('');
+    } catch (e) {
+      console.error('Error al cargar historia clinica', e);
+      this.mensaje.set('No se pudo cargar la historia clinica.');
+    } finally {
+      this.carga.ocultar();
+    }
+  }
+
+  extrasTexto(h: HistoriaClinica) {
+    const extras = [h.extra1, h.extra2, h.extra3].filter(Boolean) as string[];
+    if (!extras.length) return 'Sin datos extra';
+    return extras.join(' | ');
+  }
+
+  async descargarUsuarios() {
+    if (!this.esAdmin()) return;
+    try {
+      this.carga.mostrar();
+      const usuarios = this.lista().length ? this.lista() : await this.usuariosSrv.obtenerTodos();
+      const filas = usuarios.map(u => ({
+        Rol: u.rol,
+        Nombre: u.nombre,
+        Apellido: u.apellido,
+        Mail: u.mail,
+        DNI: u.dni,
+        Edad: u.edad,
+        'Obra social': u.rol === 'paciente' ? (u as any).obraSocial || '' : '-',
+        Especialidades: u.rol === 'especialista' ? ((u as any).especialidades || []).join(' | ') : '-',
+        Verificado: (u as any).verificado ? 'Si' : 'No',
+        Aprobado: u.rol === 'especialista' ? ((u as any).aprobado ? 'Si' : 'No') : '-'
+      }));
+
+      const hoja = utils.json_to_sheet(filas);
+      const libro = utils.book_new();
+      utils.book_append_sheet(libro, hoja, 'Usuarios');
+      writeFile(libro, 'usuarios.xlsx');
+    } catch (e) {
+      console.error('No se pudo generar el excel de usuarios', e);
+      this.mensaje.set('Hubo un problema al generar el excel de usuarios.');
+    } finally {
+      this.carga.ocultar();
+    }
   }
 
   private validarEspecialidades() {

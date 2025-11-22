@@ -1,0 +1,332 @@
+.perfil .tarjeta {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.principal {
+  text-align: center;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.principal .foto {
+  width: 210px;
+  height: 210px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 4px solid #e0f2ff;
+}
+
+.principal .info h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.principal .info .siglas {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-left: 8px;
+}
+
+.principal .info p {
+  margin: 0.2rem 0;
+  color: #4a4a4a;
+}
+
+.principal .info .rol {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.galeria {
+  margin-top: 1.5rem;
+}
+
+.galeria .lista {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.galeria img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+
+.datos-paciente {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.datos-paciente .dato {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+  min-height: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.datos-paciente .dato span {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.06em;
+}
+
+.datos-paciente .dato strong {
+  font-size: 1.25rem;
+  color: #1f2937;
+}
+
+.tarjeta-doble {
+  perspective: 900px;
+  position: relative;
+  overflow: hidden;
+  display: block;
+  padding: 0;
+  min-height: 95px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.tarjeta-doble .contenido-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  transform: rotateY(0deg);
+  display: block;
+}
+
+.tarjeta-doble .cara {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 6px;
+  padding: 0.85rem;
+  border-radius: 12px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.tarjeta-doble .cara.frente {
+  transform: rotateY(0deg);
+  background: #f8fafc;
+}
+
+.tarjeta-doble .cara.reverso {
+  transform: rotateY(180deg);
+  background: linear-gradient(145deg, #0ea5e9, #6366f1);
+  color: #fff;
+  text-align: center;
+}
+
+.tarjeta-doble .cara.reverso p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.tarjeta-doble .cara.reverso small {
+  font-size: 0.95rem;
+}
+
+.tarjeta-doble.rotada {
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+}
+
+.tarjeta-doble .contenido-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  transform: rotateY(0deg);
+}
+
+.horarios {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+}
+
+.horarios header h2 {
+  margin: 0;
+}
+
+.horarios .detalle {
+  color: #6c757d;
+  margin: 0.2rem 0 1rem;
+}
+
+.selector {
+  margin-bottom: 1rem;
+}
+
+.selector span {
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chips button {
+  border: 1px solid #cfe3ff;
+  background: #f8fbff;
+  color: #0d6efd;
+  border-radius: 20px;
+  padding: 0.35rem 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chips button.activa {
+  background: #0d6efd;
+  color: #fff;
+  border-color: #0d6efd;
+}
+
+.chips button:hover {
+  border-color: #0d6efd;
+}
+
+.matriz table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matriz th {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+}
+
+.matriz td {
+  padding: 0.5rem 0;
+  border-top: 1px solid #f1f5f9;
+}
+
+.matriz .dia {
+  width: 120px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dce3ec;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 0.35rem 0.75rem;
+  margin: 0 0.35rem 0.35rem 0;
+  cursor: pointer;
+  min-width: 70px;
+  transition: all 0.15s ease;
+}
+
+.slot.activo {
+  background: #198754;
+  color: #fff;
+  border-color: #198754;
+  box-shadow: 0 3px 8px rgba(25, 135, 84, 0.25);
+}
+
+.acciones {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.acciones .mensaje {
+  color: #198754;
+  font-weight: 600;
+}
+
+.aviso {
+  margin: 1rem 0 0;
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.historia {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.historia h2 {
+  margin-top: 0;
+}
+
+.historia .entrada {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.85rem;
+  margin-top: 0.75rem;
+  background: #f8fafc;
+}
+
+.historia .cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.historia .basicos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .principal {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .principal .foto {
+    width: 160px;
+    height: 160px;
+  }
+
+  .datos-paciente {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .matriz .dia {
+    width: 90px;
+  }
+}

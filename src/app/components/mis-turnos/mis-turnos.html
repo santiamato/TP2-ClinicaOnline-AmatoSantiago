@@ -1,0 +1,96 @@
+<section class="mis-turnos" *ngIf="rol; else sinRol">
+  <h2>Mis turnos</h2>
+  <div class="filtro" *ngIf="lista.length">
+    <input type="text" [(ngModel)]="filtro" placeholder="Filtrar por especialidad o nombre" />
+  </div>
+  <p class="aviso" *ngIf="cargando">Cargando turnos...</p>
+  <ng-container *ngIf="!cargando">
+    <p class="aviso" *ngIf="!turnosFiltrados().length">No hay turnos para mostrar</p>
+    <article
+      class="tarjeta"
+      *ngFor="let turno of turnosFiltrados()"
+      [@fadeInOut]="animacion(turno.id).fade"
+      [@slideInOut]="animacion(turno.id).slide"
+      (mouseenter)="alEntrar(turno.id)"
+      (mouseleave)="alSalir(turno.id)"
+      appSombraAlPasar
+    >
+      <header>
+        <div>
+          <strong>{{ turno.especialidad | reemplazo:'Especialidad' }} || </strong>
+          <span *ngIf="rol==='paciente'"> con {{ turno.especialistaNombre }}</span>
+          <span *ngIf="rol==='especialista'">Paciente: {{ turno.pacienteNombre }}</span>
+        </div>
+        <span [class]="estadoClase(turno.estado)">{{ turno.estado }}</span>
+      </header>
+      <p>Fecha: {{ turno.fecha }} - {{ turno.hora }}</p>
+      <div class="notas" *ngIf="rol==='paciente' && (turno.resenaEspecialista || turno.motivoEspecialista)">
+        <p *ngIf="turno.resenaEspecialista"><strong>Reseña especialista:</strong> {{ turno.resenaEspecialista | resumen:80 }}</p>
+        <p *ngIf="turno.motivoEspecialista"><strong>Motivo especialista:</strong> {{ turno.motivoEspecialista | resumen:80 }}</p>
+      </div>
+      <div class="notas" *ngIf="rol==='especialista' && (turno.motivoPaciente || turno.encuestaPaciente || turno.calificacionPaciente)">
+        <p *ngIf="turno.motivoPaciente"><strong>Motivo de cancelacion del paciente:</strong> {{ turno.motivoPaciente | resumen:80 }}</p>
+        <p *ngIf="turno.encuestaPaciente"><strong>Encuesta paciente:</strong> {{ turno.encuestaPaciente | resumen:80 }}</p>
+        <p *ngIf="turno.calificacionPaciente"><strong>Calificacion paciente:</strong> {{ turno.calificacionPaciente | resumen:80 }}</p>
+      </div>
+      <div class="botones">
+        <ng-container *ngIf="rol==='paciente'">
+          <div class="accion" *ngIf="puedeCancelarPaciente(turno)">
+            <input type="text" [(ngModel)]="motivoPaciente[turno.id]" (ngModelChange)="errorPaciente[turno.id]=''" placeholder="Motivo de cancelacion">
+            <button (click)="cancelarPaciente(turno)" [appDeshabilitarSi]="cargando">Cancelar turno</button>
+            <small class="error" *ngIf="errorPaciente[turno.id]">{{ errorPaciente[turno.id] }}</small>
+          </div>
+          <div class="accion" *ngIf="puedeEncuesta(turno)">
+            <input type="text" [(ngModel)]="encuestaTexto[turno.id]" (ngModelChange)="errorEncuesta[turno.id]=''" placeholder="Escribe tu encuesta">
+            <button (click)="completarEncuesta(turno)" [appDeshabilitarSi]="cargando">Enviar encuesta</button>
+            <small class="error" *ngIf="errorEncuesta[turno.id]">{{ errorEncuesta[turno.id] }}</small>
+          </div>
+          <div class="accion" *ngIf="puedeCalificar(turno)">
+            <input type="text" [(ngModel)]="calificacionTexto[turno.id]" (ngModelChange)="errorCalificacion[turno.id]=''" placeholder="Calificacion de la atencion">
+            <button (click)="calificarAtencion(turno)" [appDeshabilitarSi]="cargando">Enviar calificacion</button>
+            <small class="error" *ngIf="errorCalificacion[turno.id]">{{ errorCalificacion[turno.id] }}</small>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="rol==='especialista'">
+          <div class="accion" *ngIf="puedeCancelarEspecialista(turno)">
+            <input type="text" [(ngModel)]="motivoEspecialista[turno.id]" (ngModelChange)="errorEspecialista[turno.id]=''" placeholder="Motivo de cancelacion">
+            <button (click)="cancelarEspecialista(turno)">Cancelar</button>
+            <small class="error" *ngIf="errorEspecialista[turno.id]">{{ errorEspecialista[turno.id] }}</small>
+          </div>
+          <div class="accion" *ngIf="puedeCancelarEspecialista(turno)">
+            <input type="text" [(ngModel)]="motivoRechazo[turno.id]" (ngModelChange)="errorRechazo[turno.id]=''" placeholder="Motivo de rechazo">
+            <button (click)="rechazarTurno(turno)" [appDeshabilitarSi]="cargando">Rechazar</button>
+            <small class="error" *ngIf="errorRechazo[turno.id]">{{ errorRechazo[turno.id] }}</small>
+          </div>
+          <button *ngIf="puedeAceptar(turno)" (click)="aceptarTurno(turno)">Aceptar</button>
+          <div class="accion" *ngIf="puedeFinalizar(turno)">
+            <input type="text" [(ngModel)]="resumenTurno[turno.id]" (ngModelChange)="errorResumen[turno.id]=''" placeholder="Reseña de la consulta">
+            <div class="historia-clinica">
+              <p class="subtitulo">Historia clínica</p>
+              <div class="linea">
+                <label>Altura (cm)<input type="number" [(ngModel)]="obtenerHistoria(turno.id).altura" /></label>
+                <label>Peso (kg)<input type="number" [(ngModel)]="obtenerHistoria(turno.id).peso" /></label>
+              </div>
+              <div class="linea">
+                <label>Temperatura (°C)<input type="number" step="0.1" [(ngModel)]="obtenerHistoria(turno.id).temperatura" /></label>
+                <label>Presión <input type="text" placeholder="120/80" [(ngModel)]="obtenerHistoria(turno.id).presion" /></label>
+              </div>
+              <div class="extras">
+                <div class="extra" *ngFor="let extra of obtenerHistoria(turno.id).extras; let i = index">
+                  <input type="text" placeholder="Clave extra {{i+1}}" [(ngModel)]="extra.clave">
+                  <input type="text" placeholder="Valor" [(ngModel)]="extra.valor">
+                </div>
+              </div>
+              <small class="error" *ngIf="errorHistoria[turno.id]">{{ errorHistoria[turno.id] }}</small>
+            </div>
+            <button (click)="finalizarTurno(turno)">Finalizar</button>
+            <small class="error" *ngIf="errorResumen[turno.id]">{{ errorResumen[turno.id] }}</small>
+          </div>
+        </ng-container>
+      </div>
+    </article>
+  </ng-container>
+</section>
+<ng-template #sinRol>
+  <p class="aviso">No tienes permiso para ver esta seccion.</p>
+</ng-template>

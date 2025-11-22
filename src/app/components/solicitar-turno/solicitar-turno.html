@@ -1,0 +1,90 @@
+<section class="solicitar-turno" *ngIf="rol; else sinAcceso">
+  <h2>Solicitar turno</h2>
+  <div class="info" *ngIf="mensaje">
+    <div class="banner">
+      <strong>{{ mensaje }}</strong>
+    </div>
+  </div>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <div class="bloque" *ngIf="rol==='administrador'">
+    <h3>Paciente</h3>
+    <select [(ngModel)]="pacienteSeleccionado" (ngModelChange)="seleccionarPaciente($event)">
+      <option [ngValue]="null">Elegir paciente</option>
+      <option *ngFor="let p of pacientes" [ngValue]="p">{{ p.nombre }} {{ p.apellido }}</option>
+    </select>
+  </div>
+
+  <div class="bloque">
+    <h3>Profesionales</h3>
+    <div class="profesionales-grid" *ngIf="especialistas.length > 0; else sinProfesionales">
+      <button type="button"
+              class="prof-card"
+              *ngFor="let esp of especialistas"
+              [class.sel]="especialistaSeleccionado?.id === esp.id"
+              (click)="seleccionarProfesional(esp)">
+        <img [src]="imagenProfesional(esp)" [alt]="'Profesional ' + esp.nombre" />
+        <span>{{ esp.nombre }} {{ esp.apellido }}</span>
+      </button>
+    </div>
+    <ng-template #sinProfesionales>
+      <p class="aviso">No hay especialistas disponibles para seleccionar.</p>
+    </ng-template>
+  </div>
+
+  <div class="bloque" *ngIf="especialistaSeleccionado">
+    <h3>Especialidades de {{ especialistaSeleccionado.nombre }}</h3>
+    <div class="especialidades-grid" *ngIf="especialidadesDelProfesional().length > 0; else sinEspecialidades">
+      <button type="button"
+              class="especialidad-card"
+              *ngFor="let esp of especialidadesDelProfesional()"
+              [class.sel]="especialidadSeleccionada === esp"
+              (click)="seleccionarEspecialidad(esp)">
+        <div class="especialidad-img">
+          <img [src]="imagenEspecialidad(esp)" [alt]="'Especialidad ' + esp" />
+        </div>
+        <span>{{ esp }}</span>
+      </button>
+    </div>
+    <ng-template #sinEspecialidades>
+      <p class="aviso">Este profesional aun no tiene especialidades cargadas.</p>
+    </ng-template>
+  </div>
+
+  <div class="bloque" *ngIf="especialistaSeleccionado && especialidadSeleccionada">
+    <h3>Dias disponibles</h3>
+    <div class="dias-grid" *ngIf="diasConDisponibilidad.length > 0; else sinDias">
+      <button type="button"
+              class="dia-card"
+              *ngFor="let dia of diasConDisponibilidad"
+              [class.sel]="diaSeleccionado === dia"
+              (click)="seleccionarDia(dia)">
+        {{ formatearDiaCorto(dia) }}
+      </button>
+    </div>
+    <ng-template #sinDias>
+      <p class="aviso">No hay dias disponibles para esta especialidad.</p>
+    </ng-template>
+  </div>
+
+  <div class="bloque" *ngIf="especialistaSeleccionado && especialidadSeleccionada && diaSeleccionado">
+    <h3>Horarios disponibles</h3>
+    <div class="slots-grid" *ngIf="horasDisponiblesDia.length > 0; else sinHorarios">
+      <button type="button"
+              class="slot"
+              *ngFor="let hora of horasDisponiblesDia"
+              [class.sel]="horaSeleccionada === hora"
+              (click)="seleccionarHora(hora)">
+        {{ formatearSlot(diaSeleccionado, hora) }}
+      </button>
+    </div>
+    <ng-template #sinHorarios>
+      <p class="aviso">No hay horarios disponibles para el {{ formatearDiaCorto(diaSeleccionado) }}.</p>
+    </ng-template>
+  </div>
+
+  <button class="primario" type="button" (click)="solicitar()" [disabled]="!puedeEnviar()">Guardar turno</button>
+</section>
+<ng-template #sinAcceso>
+  <p class="aviso">No tienes permiso para ver esta seccion.</p>
+</ng-template>

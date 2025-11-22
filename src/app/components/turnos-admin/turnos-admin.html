@@ -1,0 +1,31 @@
+<section class="turnos-admin">
+  <h2>Turnos de la clinica</h2>
+  <div class="filtro">
+    <input type="text" [(ngModel)]="filtro" placeholder="Buscar por especialidad o especialista" />
+  </div>
+  <p class="aviso" *ngIf="cargando">Cargando turnos...</p>
+  <ng-container *ngIf="!cargando">
+    <p class="aviso" *ngIf="!turnosFiltrados.length">No hay turnos</p>
+    <article class="tarjeta" *ngFor="let turno of turnosFiltrados">
+      <header>
+        <div>
+          <strong>{{ turno.especialidad }}</strong>
+          <span>: {{ turno.especialistaNombre }}</span>
+          <span> | Paciente: {{ turno.pacienteNombre }}</span>
+        </div>
+        <span [class]="estadoClase(turno.estado)">{{ turno.estado }}</span>
+      </header>
+      <p>Fecha: {{ turno.fecha }} - {{ turno.hora }}</p>
+      <div class="notas">
+        <p *ngIf="turno.motivoPaciente"><strong>Motivo paciente:</strong> {{ turno.motivoPaciente }}</p>
+        <p *ngIf="turno.motivoEspecialista"><strong>Motivo especialista:</strong> {{ turno.motivoEspecialista }}</p>
+        <p *ngIf="turno.resenaEspecialista"><strong>Resena:</strong> {{ turno.resenaEspecialista }}</p>
+      </div>
+      <div class="acciones" *ngIf="puedeCancelar(turno)">
+        <input type="text" [(ngModel)]="motivos[turno.id]" (ngModelChange)="errores[turno.id]=''" placeholder="Motivo de cancelacion" />
+        <button (click)="cancelar(turno)">Cancelar turno</button>
+        <small class="error" *ngIf="errores[turno.id]">{{ errores[turno.id] }}</small>
+      </div>
+    </article>
+  </ng-container>
+</section>

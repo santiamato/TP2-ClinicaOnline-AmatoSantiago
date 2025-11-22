@@ -1,11 +1,11 @@
 <section class="selector-inicial" *ngIf="tipo() === null">
 
-  <button class="opcion" (click)="tipo.set('paciente')">
+  <button class="opcion" (click)="seleccionar('paciente')">
     <img src="foto_paciente.webp" alt="Paciente">
     <span>Paciente</span>
   </button>
 
-  <button class="opcion" (click)="tipo.set('especialista')">
+  <button class="opcion" (click)="seleccionar('especialista')">
     <img src="foto_especialista.jpg" alt="Especialista">
     <span>Especialista</span>
   </button>
@@ -52,9 +52,6 @@
         <span>Correo</span>
         <input type="email" formControlName="mail" />
         <small class="error" *ngIf="formPaciente.get('mail')?.invalid && formPaciente.get('mail')?.touched">Correo invalido.</small>
-        <div *ngIf="info" class="error">
-          {{ info }}
-        </div>
       </label>
 
       <label>
@@ -76,6 +73,11 @@
         <input type="file" (change)="onArchivo($event,'imagen2')" accept="image/*" />
         <small class="error" *ngIf="formPaciente.get('imagen2')?.invalid && formPaciente.get('imagen2')?.touched">Campo requerido.</small>
       </label>
+
+      <div class="col-span captcha">
+        <div #captchaPaciente class="recaptcha-container"></div>
+        <small class="error" *ngIf="captchaError() && tipo()==='paciente'">{{ captchaError() }}</small>
+      </div>
 
     </div>
     <button class="btn primario" type="submit">Crear cuenta</button>
@@ -154,6 +156,11 @@
         <input type="file" (change)="onArchivo($event,'imagen')" accept="image/*" />
         <small class="error" *ngIf="formEspecialista.get('imagen')?.invalid && formEspecialista.get('imagen')?.touched">Campo requerido.</small>
       </label>
+
+      <div class="col-span captcha">
+        <div #captchaEspecialista class="recaptcha-container"></div>
+        <small class="error" *ngIf="captchaError() && tipo()==='especialista'">{{ captchaError() }}</small>
+      </div>
 
     </div>
 

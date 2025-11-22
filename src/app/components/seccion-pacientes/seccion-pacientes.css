@@ -1,0 +1,53 @@
+.pacientes {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+}
+
+.lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.item {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #d5e3f0;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.historia {
+  margin-top: 1rem;
+}
+
+.historia .entrada {
+  border: 1px solid #d5e3f0;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  background: #f8fafc;
+}
+
+.historia .cabecera {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.historia .datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.aviso {
+  color: #0d6efd;
+  font-weight: 600;
+}

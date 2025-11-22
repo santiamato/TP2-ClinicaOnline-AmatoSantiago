@@ -1,0 +1,159 @@
+<section class="perfil" *ngIf="usuario() as u">
+  <div class="tarjeta" appSombraAlPasar>
+    <div class="principal">
+      <img class="foto" [src]="fotoPrincipal(u)" alt="Foto de perfil" appEscalaAlPasar />
+      <div class="info">
+        <h1>{{ u.nombre }} {{ u.apellido }} <small class="siglas">{{ (u.nombre + ' ' + u.apellido) | iniciales }}</small></h1>
+        <p class="rol">Rol: {{ u.rol | titlecase }}</p>
+        <p *ngIf="u.rol!=='paciente'"><strong>Correo:</strong> {{ u.mail }}</p>
+        <p *ngIf="u.rol!=='paciente'"><strong>DNI:</strong> {{ u.dni }}</p>
+        <p *ngIf="u.rol!=='paciente'"><strong>Edad:</strong> {{ u.edad }} a&ntilde;os</p>
+        <p class="extra" *ngIf="u.rol==='especialista'"><strong>Especialidades:</strong> {{ especialidadesTexto(u) }}</p>
+      </div>
+      <div class="datos-paciente" *ngIf="u.rol==='paciente'">
+        <div
+          class="dato tarjeta-doble"
+          [class.rotada]="estadoDato('correo')==='rotated'"
+          (mouseenter)="girarDato('correo')"
+          (mouseleave)="restaurarDato('correo')"
+        >
+          <div class="contenido-3d" [@rotate]="estadoDato('correo')">
+            <div class="cara frente">
+              <span>Correo</span>
+            </div>
+            <div class="cara reverso">
+              <strong>{{ u.mail }}</strong>
+            </div>
+          </div>
+        </div>
+        <div
+          class="dato tarjeta-doble"
+          [class.rotada]="estadoDato('dni')==='rotated'"
+          (mouseenter)="girarDato('dni')"
+          (mouseleave)="restaurarDato('dni')"
+        >
+          <div class="contenido-3d" [@rotate]="estadoDato('dni')">
+            <div class="cara frente">
+              <span>DNI</span>
+            </div>
+            <div class="cara reverso">
+              <strong>{{ u.dni }}</strong>
+            </div>
+          </div>
+        </div>
+        <div
+          class="dato tarjeta-doble"
+          [class.rotada]="estadoDato('obra')==='rotated'"
+          (mouseenter)="girarDato('obra')"
+          (mouseleave)="restaurarDato('obra')"
+        >
+          <div class="contenido-3d" [@rotate]="estadoDato('obra')">
+            <div class="cara frente">
+              <span>Obra social</span>
+            </div>
+            <div class="cara reverso">
+              <strong>{{ obraSocial(u) | reemplazo:'Sin obra social' }}</strong>
+            </div>
+          </div>
+        </div>
+        <div
+          class="dato tarjeta-doble"
+          [class.rotada]="estadoDato('edad')==='rotated'"
+          (mouseenter)="girarDato('edad')"
+          (mouseleave)="restaurarDato('edad')"
+        >
+          <div class="contenido-3d" [@rotate]="estadoDato('edad')">
+            <div class="cara frente">
+              <span>Edad</span>
+            </div>
+            <div class="cara reverso">
+              <strong>{{ u.edad }} a&ntilde;os</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="galeria" *ngIf="imagenesPerfil(u).length > 1">
+      <p>Otras im&aacute;genes</p>
+      <div class="lista">
+        <img *ngFor="let img of imagenesPerfil(u)" [src]="img" alt="Imagen secundaria" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="historia" *ngIf="usuario()?.rol==='paciente'">
+  <h2>Mi historia clínica</h2>
+  <p class="aviso" *ngIf="!historias().length">Aún no hay atenciones registradas.</p>
+  <div class="entrada" *ngFor="let h of historias()">
+    <div class="cab">
+      <strong>{{ h.fecha | date:'short' }}</strong>
+      <span>Especialista: {{ h.especialistaNombre }}</span>
+    </div>
+    <div class="basicos">
+      <span>Altura: {{ h.altura }} cm</span>
+      <span>Peso: {{ h.peso }} kg</span>
+      <span>Temperatura: {{ h.temperatura }} °C</span>
+      <span>Presión: {{ h.presion }}</span>
+    </div>
+    <div class="extras" *ngIf="h.extra1 || h.extra2 || h.extra3">
+      <p><strong>Datos extra:</strong> {{ extrasTexto(h) }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="horarios" *ngIf="especialistaActual() as esp">
+  <header>
+    <h2>Mis horarios</h2>
+    <p class="detalle">Selecciona tu disponibilidad por especialidad y dia. Estos horarios se usaran al solicitar turnos.</p>
+  </header>
+
+  <div class="selector" *ngIf="esp.especialidades.length; else sinEspecialidad">
+    <span>Especialidad</span>
+    <div class="chips">
+      <button type="button"
+        *ngFor="let espNombre of esp.especialidades"
+        (click)="seleccionarEspecialidad(espNombre)"
+        [class.activa]="especialidadActiva()===espNombre">
+        {{ espNombre }}
+      </button>
+    </div>
+  </div>
+
+  <div class="matriz" *ngIf="especialidadActiva(); else seleccionaUna">
+    <table>
+      <thead>
+        <tr>
+          <th>Dia</th>
+          <th>Horarios disponibles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dia of dias">
+          <td class="dia">{{ dia | titlecase }}</td>
+          <td>
+            <button type="button"
+              class="slot"
+              *ngFor="let hora of horas"
+              [class.activo]="estaSeleccionado(dia, hora)"
+              (click)="toggleHora(dia, hora)">
+              {{ hora }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="acciones">
+      <button type="button" class="btn principal" (click)="guardarHorarios()">Guardar cambios</button>
+      <span class="mensaje" *ngIf="mensaje()">{{ mensaje() }}</span>
+    </div>
+  </div>
+
+  <ng-template #sinEspecialidad>
+    <p class="aviso">Agrega tus especialidades desde la seccion de usuarios para habilitar los horarios.</p>
+  </ng-template>
+
+  <ng-template #seleccionaUna>
+    <p class="aviso">Eleg&iacute; una especialidad para configurar sus dias disponibles.</p>
+  </ng-template>
+</section>

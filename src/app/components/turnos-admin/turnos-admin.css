@@ -1,0 +1,107 @@
+.turnos-admin {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.turnos-admin h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.filtro input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.aviso {
+  text-align: center;
+  color: #555;
+}
+
+.tarjeta {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.tarjeta header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.estado {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.estado.pendiente {
+  background: #fff7cd;
+  border: 1px solid #ffe58f;
+  color: #8c6d1f;
+}
+
+.estado.aceptado,
+.estado.aprobado,
+.estado.realizado {
+  background: #d1f7dc;
+  border: 1px solid #9be2b1;
+  color: #1b6b3a;
+}
+
+.estado.rechazado,
+.estado.cancelado {
+  background: #ffe0e0;
+  border: 1px solid #ffb3b3;
+  color: #c62828;
+}
+
+.notas {
+  background: #f6f8ff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.notas p { margin: 0; }
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.acciones input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.acciones button {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #0e6ba8;
+  color: #fff;
+}
+
+.acciones .error {
+  color: #c62828;
+  font-size: 12px;
+}

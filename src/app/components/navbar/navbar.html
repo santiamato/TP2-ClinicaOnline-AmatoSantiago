@@ -5,7 +5,12 @@
       <a routerLink="/inicio" routerLinkActive="activo" ariaCurrentWhenActive="page">Inicio</a>
       <a routerLink="/registro" routerLinkActive="activo">Registro</a>
       <a routerLink="/login" routerLinkActive="activo" *ngIf="!auth.actual()">Ingresar</a>
+      <a routerLink="/mi-perfil" routerLinkActive="activo" *ngIf="auth.actual()">Mi perfil</a>
+      <a routerLink="/mis-turnos" routerLinkActive="activo" *ngIf="auth.actual()?.rol==='paciente' || auth.actual()?.rol==='especialista'">Mis turnos</a>
+      <a routerLink="/pacientes" routerLinkActive="activo" *ngIf="auth.actual()?.rol==='especialista'">Pacientes</a>
+      <a routerLink="/solicitar-turno" routerLinkActive="activo" *ngIf="auth.actual()?.rol==='paciente' || auth.actual()?.rol==='administrador'">Solicitar turno</a>
       <a routerLink="/usuarios" routerLinkActive="activo" *ngIf="auth.actual()?.rol==='administrador'">Usuarios</a>
+      <a routerLink="/turnos" routerLinkActive="activo" *ngIf="auth.actual()?.rol==='administrador'">Turnos</a>
       <div class="usuario" *ngIf="auth.actual() as u">
         <span>{{ u.nombre }} {{ u.apellido }} ({{ u.rol }})</span>
         <button class="btn salir" (click)="salir()">Salir</button>

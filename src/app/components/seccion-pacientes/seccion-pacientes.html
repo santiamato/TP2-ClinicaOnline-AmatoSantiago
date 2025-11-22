@@ -1,0 +1,30 @@
+<section class="pacientes">
+  <h2>Pacientes atendidos</h2>
+  <p class="aviso" *ngIf="cargando">Cargando historias...</p>
+  <p class="aviso" *ngIf="!cargando && !pacientes.length">Aún no atendiste pacientes.</p>
+
+  <div class="lista">
+    <button class="item" *ngFor="let p of pacientes" (click)="verHistoria(p.id)">
+      {{ p.nombre }}
+    </button>
+  </div>
+
+  <section class="historia" *ngIf="seleccionadas.length">
+    <h3>Historia clínica de {{ pacienteNombre }}</h3>
+    <div class="entrada" *ngFor="let h of seleccionadas">
+      <div class="cabecera">
+        <strong>{{ h.fecha | date:'short' }}</strong>
+        <span>Especialista: {{ h.especialistaNombre }}</span>
+      </div>
+      <div class="datos">
+        <span>Altura: {{ h.altura }} cm</span>
+        <span>Peso: {{ h.peso }} kg</span>
+        <span>Temperatura: {{ h.temperatura }} °C</span>
+        <span>Presión: {{ h.presion }}</span>
+      </div>
+      <div class="extras" *ngIf="h.extra1 || h.extra2 || h.extra3">
+        <strong>Datos extra:</strong> {{ extrasTexto(h) }}
+      </div>
+    </div>
+  </section>
+</section>

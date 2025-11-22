@@ -256,20 +256,25 @@
             box-shadow: 0 0 0 2px rgba(14, 107, 168, 0.2);
         }
 
+        .acciones {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
         .lista {
             margin-bottom: 20px;
         }
 
 .item {
             display: grid;
-            /* Columnas fijas y consistentes para alinear todos los registros */
             grid-template-columns:
                 minmax(180px, 2fr)   /* Nombre */
                 minmax(240px, 2fr)   /* Mail */
                 minmax(110px, 1fr)   /* Rol */
                 minmax(120px, 1fr)   /* Verificado */
                 minmax(120px, 1fr)   /* Aprobado */
-                minmax(120px, 1fr);  /* Habilitado */
+                minmax(140px, 1fr);  /* Historia */
             gap: 10px;
             padding: 10px;
             border-bottom: 1px solid #d5e3f0;
@@ -349,4 +354,36 @@
 
         .switch input:checked + span:before {
             transform: translateX(26px);
+        }
+
+        .historia {
+            padding: 16px;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(14, 107, 168, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .historia .entrada {
+            border: 1px solid #d5e3f0;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            background: #f8fafc;
+        }
+
+        .historia .cabecera {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .historia .datos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
         }
