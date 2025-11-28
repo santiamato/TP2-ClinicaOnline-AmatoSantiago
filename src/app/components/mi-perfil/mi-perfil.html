@@ -3,7 +3,7 @@
     <div class="principal">
       <img class="foto" [src]="fotoPrincipal(u)" alt="Foto de perfil" appEscalaAlPasar />
       <div class="info">
-        <h1>{{ u.nombre }} {{ u.apellido }} <small class="siglas">{{ (u.nombre + ' ' + u.apellido) | iniciales }}</small></h1>
+        <h1>{{ u.nombre }} {{ u.apellido }} <small class="siglas"></small></h1>
         <p class="rol">Rol: {{ u.rol | titlecase }}</p>
         <p *ngIf="u.rol!=='paciente'"><strong>Correo:</strong> {{ u.mail }}</p>
         <p *ngIf="u.rol!=='paciente'"><strong>DNI:</strong> {{ u.dni }}</p>
@@ -83,7 +83,10 @@
 </section>
 
 <section class="historia" *ngIf="usuario()?.rol==='paciente'">
-  <h2>Mi historia clínica</h2>
+  <div class="cabecera-historia">
+    <h2>Mi historia clinica</h2>
+    <button type="button" class="btn-descarga" (click)="descargarHistoriaPaciente()" [disabled]="!historias().length">Descargar PDF</button>
+  </div>
   <p class="aviso" *ngIf="!historias().length">Aún no hay atenciones registradas.</p>
   <div class="entrada" *ngFor="let h of historias()">
     <div class="cab">
@@ -106,6 +109,7 @@
   <header>
     <h2>Mis horarios</h2>
     <p class="detalle">Selecciona tu disponibilidad por especialidad y dia. Estos horarios se usaran al solicitar turnos.</p>
+    <button type="button" class="btn-descarga secundario" (click)="descargarAtencionesProfesional()">Descargar atenciones realizadas</button>
   </header>
 
   <div class="selector" *ngIf="esp.especialidades.length; else sinEspecialidad">

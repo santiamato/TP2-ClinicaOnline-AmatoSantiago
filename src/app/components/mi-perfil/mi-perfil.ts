@@ -8,9 +8,9 @@ import { Especialista, Paciente, Usuario } from '../../servicios/usuarios';
 import { HistoriasClinicasService, HistoriaClinica } from '../../servicios/historias-clinicas';
 import { InicialesPipe } from '../../shared/pipes/iniciales.pipe';
 import { ReemplazoPipe } from '../../shared/pipes/reemplazo.pipe';
-import { ResumenPipe } from '../../shared/pipes/resumen.pipe';
 import { SombraAlPasarDirective } from '../../shared/directives/sombra-hover.directive';
 import { EscalaAlPasarDirective } from '../../shared/directives/escala-hover.directive';
+import jsPDF from 'jspdf';
 
 type RegistroDias = Record<DiaSemana, string[]>;
 type MapaDisponibilidad = Record<string, RegistroDias>;
@@ -18,7 +18,7 @@ type MapaDisponibilidad = Record<string, RegistroDias>;
 @Component({
   standalone: true,
   selector: 'app-mi-perfil',
-  imports: [CommonModule, InicialesPipe, ReemplazoPipe, ResumenPipe, SombraAlPasarDirective, EscalaAlPasarDirective],
+  imports: [CommonModule, InicialesPipe, ReemplazoPipe, SombraAlPasarDirective, EscalaAlPasarDirective],
   templateUrl: './mi-perfil.html',
   styleUrls: ['./mi-perfil.css'],
   animations: [
@@ -48,6 +48,10 @@ export class MiPerfil {
   mensaje = signal('');
   historias = signal<HistoriaClinica[]>([]);
   giros: Record<string, 'normal' | 'rotated'> = {};
+  private logoData: string | null = null;
+  private cargandoLogo = false;
+  private historiasProfesional: HistoriaClinica[] = [];
+  private historiasProfesionalCargadas = false;
 
   constructor() {
     const actual = this.auth.actual();
@@ -56,6 +60,7 @@ export class MiPerfil {
       return;
     }
     this.usuario.set(actual);
+    this.cargarLogo();
     if (actual.rol === 'especialista') {
       this.cargarDisponibilidad(actual as Especialista);
     } else if (actual.rol === 'paciente') {
@@ -130,6 +135,59 @@ export class MiPerfil {
     return extras.join(' | ');
   }
 
+  async descargarHistoriaPaciente() {
+    const user = this.usuario();
+    if (!user || user.rol !== 'paciente') return;
+    const registros = this.historias();
+    if (!registros.length) return;
+    await this.cargarLogo();
+    const pdf = this.crearEncabezadoPdf('Historia clinica del paciente', `${user.nombre} ${user.apellido}`);
+    let y = 45;
+    pdf.setFontSize(11);
+    y = this.escribirLinea(pdf, `DNI: ${user.dni}`, y);
+    y = this.escribirLinea(pdf, `Obra social: ${this.obraSocial(user) || 'Sin datos'}`, y);
+    y += 4;
+    registros.forEach((h, idx) => {
+      pdf.setFontSize(12);
+      y = this.escribirLinea(pdf, `Atencion ${idx + 1} - ${this.formatearFechaCompleta(h.fecha)}`, y);
+      pdf.setFontSize(10);
+      y = this.escribirLinea(pdf, `Especialista: ${h.especialistaNombre}`, y);
+      y = this.escribirLinea(pdf, `Altura: ${h.altura} cm | Peso: ${h.peso} kg | Temperatura: ${h.temperatura} C | Presion: ${h.presion}`, y);
+      const extras = this.extrasTexto(h);
+      if (extras) {
+        y = this.escribirParrafo(pdf, `Datos extra: ${extras}`, y);
+      }
+      y += 4;
+    });
+    pdf.save('historia_clinica.pdf');
+  }
+
+  async descargarAtencionesProfesional() {
+    const esp = this.especialistaActual();
+    if (!esp) return;
+    const lista = await this.obtenerHistoriasProfesional(esp.id);
+    if (!lista.length) {
+      alert('No hay atenciones registradas para este profesional.');
+      return;
+    }
+    await this.cargarLogo();
+    const pdf = this.crearEncabezadoPdf('Atenciones del profesional', `${esp.nombre} ${esp.apellido}`);
+    let y = 45;
+    lista.forEach((h, idx) => {
+      pdf.setFontSize(12);
+      y = this.escribirLinea(pdf, `Atencion ${idx + 1} - ${this.formatearFechaCompleta(h.fecha)}`, y);
+      pdf.setFontSize(10);
+      y = this.escribirLinea(pdf, `Paciente: ${h.pacienteNombre}`, y);
+      y = this.escribirLinea(pdf, `Altura: ${h.altura} cm | Peso: ${h.peso} kg | Temperatura: ${h.temperatura} C | Presion: ${h.presion}`, y);
+      const extras = this.extrasTexto(h);
+      if (extras) {
+        y = this.escribirParrafo(pdf, `Datos extra: ${extras}`, y);
+      }
+      y += 4;
+    });
+    pdf.save('atenciones_profesional.pdf');
+  }
+
   estadoDato(clave: string) {
     if (!this.giros[clave]) this.giros[clave] = 'normal';
     return this.giros[clave];
@@ -188,5 +246,103 @@ export class MiPerfil {
     } catch (e) {
       console.error('No se pudo cargar la historia clinica', e);
     }
+  }
+
+  private async cargarLogo() {
+    if (this.logoData || this.cargandoLogo) return;
+    this.cargandoLogo = true;
+    try {
+      const resp = await fetch('Logo.png');
+      if (!resp.ok) return;
+      const blob = await resp.blob();
+      this.logoData = await this.blobToDataURL(blob);
+    } catch (e) {
+      console.warn('No se pudo cargar el logo', e);
+    } finally {
+      this.cargandoLogo = false;
+    }
+  }
+
+  private blobToDataURL(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  private crearEncabezadoPdf(titulo: string, subtitulo: string) {
+    const pdf = new jsPDF();
+    const ancho = pdf.internal.pageSize.getWidth();
+    if (this.logoData) {
+      pdf.addImage(this.logoData, 'PNG', 10, 8, 24, 24);
+    }
+    pdf.setFontSize(18);
+    pdf.text('Clinica Santa Ana', ancho / 2, 18, { align: 'center' });
+    pdf.setFontSize(12);
+    pdf.text(`Fecha de emision: ${this.formatearFechaHoy()}`, ancho - 10, 12, { align: 'right' });
+    pdf.setFontSize(14);
+    pdf.text(titulo, ancho / 2, 32, { align: 'center' });
+    pdf.setFontSize(11);
+    pdf.text(subtitulo, ancho / 2, 38, { align: 'center' });
+    return pdf;
+  }
+
+  private escribirLinea(pdf: jsPDF, texto: string, y: number) {
+    y = this.verificarSalto(pdf, y);
+    pdf.text(texto, 10, y);
+    return y + 6;
+  }
+
+  private escribirParrafo(pdf: jsPDF, texto: string, y: number) {
+    const ancho = pdf.internal.pageSize.getWidth() - 20;
+    const lineas = pdf.splitTextToSize(texto, ancho);
+    lineas.forEach((linea: string) => {
+      y = this.verificarSalto(pdf, y);
+      pdf.text(linea, 10, y);
+      y += 6;
+    });
+    return y;
+  }
+
+  private verificarSalto(pdf: jsPDF, y: number) {
+    const max = pdf.internal.pageSize.getHeight() - 20;
+    if (y > max) {
+      pdf.addPage();
+      return 20;
+    }
+    return y;
+  }
+
+  private formatearFechaCompleta(valor: string) {
+    const fecha = new Date(valor);
+    if (isNaN(fecha.getTime())) return valor;
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const anio = fecha.getFullYear();
+    const horas = String(fecha.getHours()).padStart(2, '0');
+    const minutos = String(fecha.getMinutes()).padStart(2, '0');
+    return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+  }
+
+  private formatearFechaHoy() {
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const anio = hoy.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+  }
+
+  private async obtenerHistoriasProfesional(id: string) {
+    if (this.historiasProfesionalCargadas) return this.historiasProfesional;
+    try {
+      this.historiasProfesional = await this.historiasSrv.listarPorEspecialista(id);
+      this.historiasProfesionalCargadas = true;
+    } catch (e) {
+      console.error('No se pudo cargar las atenciones del profesional', e);
+      this.historiasProfesional = [];
+    }
+    return this.historiasProfesional;
   }
 }

@@ -1,0 +1,70 @@
+<div class="acciones-globales">
+  <button class="btn descarga" (click)="descargarPdf()">Descargar PDF</button>
+</div>
+
+<section id="informesWrapper" class="informes-wrapper">
+  <div class="tarjeta">
+    <h2>Informes del sistema</h2>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Turnos por especialidad</h3>
+    <canvas id="graficoEspecialidad"></canvas>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Turnos por día</h3>
+    <canvas id="graficoDia"></canvas>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Turnos por médico (rangos)</h3>
+    <p class="descripcion-rango">Elegí un periodo para comparar cuántos turnos solicitó o finalizó cada profesional.</p>
+
+    <div class="grid rangos">
+      <label>
+        <span>Desde</span>
+        <input type="date" [(ngModel)]="desde">
+        <small class="ayuda-fecha">dd/mm/aaaa</small>
+      </label>
+
+      <label>
+        <span>Hasta</span>
+        <input type="date" [(ngModel)]="hasta">
+        <small class="ayuda-fecha">dd/mm/aaaa</small>
+      </label>
+    </div>
+
+    <div class="acciones-rango">
+      <button class="btn primario" (click)="cargarSolicitadosPorMedico()">Turnos solicitados</button>
+      <button class="btn primario" (click)="cargarFinalizadosPorMedico()">Turnos finalizados</button>
+    </div>
+
+    <canvas id="graficoSolicitados"></canvas>
+    <canvas id="graficoFinalizados"></canvas>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Log de ingresos</h3>
+
+    <table class="lista">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let log of logs">
+          <td>{{ log.usuario }}</td>
+          <td><span class="chip" [ngClass]="rolClase(log.rol)">{{ log.rol || 'Sin rol' }}</span></td>
+          <td>{{ log.fecha | date }}</td>
+          <td>{{ log.fecha | date: 'HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

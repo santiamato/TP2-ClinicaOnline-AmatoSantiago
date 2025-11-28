@@ -1,30 +1,59 @@
 <section class="pacientes">
   <h2>Pacientes atendidos</h2>
   <p class="aviso" *ngIf="cargando">Cargando historias...</p>
-  <p class="aviso" *ngIf="!cargando && !pacientes.length">Aún no atendiste pacientes.</p>
+  <p class="aviso" *ngIf="!cargando && !pacientes.length">Aun no atendiste pacientes.</p>
 
-  <div class="lista">
-    <button class="item" *ngFor="let p of pacientes" (click)="verHistoria(p.id)">
-      {{ p.nombre }}
+  <div class="favoritos" *ngIf="pacientes.length">
+    <button
+      class="fav-btn"
+      type="button"
+      *ngFor="let p of pacientes"
+      [class.activo]="pacienteActual?.id === p.id"
+      (click)="verPaciente(p)">
+      <img [src]="p.imagen" [alt]="'Paciente ' + p.nombre" />
+      <span>{{ p.nombre }}</span>
     </button>
   </div>
 
-  <section class="historia" *ngIf="seleccionadas.length">
-    <h3>Historia clínica de {{ pacienteNombre }}</h3>
-    <div class="entrada" *ngFor="let h of seleccionadas">
-      <div class="cabecera">
-        <strong>{{ h.fecha | date:'short' }}</strong>
-        <span>Especialista: {{ h.especialistaNombre }}</span>
-      </div>
-      <div class="datos">
-        <span>Altura: {{ h.altura }} cm</span>
-        <span>Peso: {{ h.peso }} kg</span>
-        <span>Temperatura: {{ h.temperatura }} °C</span>
-        <span>Presión: {{ h.presion }}</span>
-      </div>
-      <div class="extras" *ngIf="h.extra1 || h.extra2 || h.extra3">
-        <strong>Datos extra:</strong> {{ extrasTexto(h) }}
+  <section class="detalle" *ngIf="pacienteActual">
+    <div class="turnos">
+      <h3>Consultas de {{ pacienteActual?.nombre }}</h3>
+      <article class="tarjeta-turno" *ngFor="let t of turnosPaciente">
+        <div class="cabecera">
+          <strong>{{ t.fecha }} - {{ t.hora }}</strong>
+          <span class="chip">{{ t.especialidad }}</span>
+        </div>
+        <p>Estado: {{ t.estado }}</p>
+        <p *ngIf="t.motivoPaciente"><strong>Motivo paciente:</strong> {{ t.motivoPaciente }}</p>
+        <p *ngIf="t.motivoEspecialista"><strong>Motivo especialista:</strong> {{ t.motivoEspecialista }}</p>
+        <div class="resena" *ngIf="t.resenaEspecialista">
+          <button type="button" (click)="verResena(t)">
+            {{ turnoConResena === t.id ? 'Ocultar resena' : 'Ver resena' }}
+          </button>
+          <p *ngIf="turnoConResena === t.id">{{ t.resenaEspecialista }}</p>
+        </div>
+      </article>
+      <p class="aviso" *ngIf="!turnosPaciente.length">Todavia no hay turnos realizados para este paciente.</p>
+    </div>
+
+    <div class="historia" *ngIf="historiasPaciente.length">
+      <h3>Historia clinica de {{ pacienteActual?.nombre }}</h3>
+      <div class="entrada" *ngFor="let h of historiasPaciente">
+        <div class="cabecera">
+          <strong>{{ h.fecha | date:'short' }}</strong>
+          <span>Especialista: {{ h.especialistaNombre }}</span>
+        </div>
+        <div class="datos">
+          <span>Altura: {{ h.altura }} cm</span>
+          <span>Peso: {{ h.peso }} kg</span>
+          <span>Temperatura: {{ h.temperatura }} C</span>
+          <span>Presion: {{ h.presion }}</span>
+        </div>
+        <div class="extras" *ngIf="h.extra1 || h.extra2 || h.extra3">
+          <strong>Datos extra:</strong> {{ extrasTexto(h) }}
+        </div>
       </div>
     </div>
+    <p class="aviso" *ngIf="!historiasPaciente.length">Sin registros de historia clinica.</p>
   </section>
 </section>

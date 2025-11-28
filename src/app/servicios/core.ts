@@ -1,10 +1,12 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Usuario, UsuariosService } from './usuarios';
+import { SupabaseService } from './supabase';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private claveSesion = 'sesionActual';
   actual = signal<Usuario | null>(null);
+  private supabase = inject(SupabaseService);
 
   constructor() {
     const guardado = localStorage.getItem(this.claveSesion);
@@ -16,11 +18,25 @@ export class AuthService {
   iniciar(usuario: Usuario) {
     localStorage.setItem(this.claveSesion, JSON.stringify(usuario));
     this.actual.set(usuario);
+    void this.registrarIngreso(usuario);
   }
 
   cerrar() {
     localStorage.removeItem(this.claveSesion);
     this.actual.set(null);
+  }
+
+  private async registrarIngreso(usuario: Usuario) {
+    try {
+      const nombre = `${usuario.nombre} ${usuario.apellido}`.trim() || usuario.mail;
+      const { error } = await this.supabase.db.from('log_ingresos').insert({
+        usuario: nombre,
+        rol: usuario.rol,
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error('No se pudo guardar el log de ingreso', error);
+    }
   }
 }
 

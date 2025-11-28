@@ -5,19 +5,105 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
 }
 
-.lista {
+.favoritos {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1rem 0;
+  gap: 1rem;
+  margin: 1.5rem 0;
 }
 
-.item {
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #d5e3f0;
-  background: #f8fafc;
+.fav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  background: transparent;
   cursor: pointer;
+  color: #0f172a;
+}
+
+.fav-btn img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid transparent;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.fav-btn span {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #0e6ba8;
+}
+
+.fav-btn.activo img,
+.fav-btn:hover img {
+  transform: scale(1.05);
+  border-color: #0e6ba8;
+}
+
+.detalle {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.turnos,
+.historia {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #d5e3f0;
+}
+
+.tarjeta-turno {
+  border: 1px solid #d5e3f0;
+  border-radius: 10px;
+  padding: 0.9rem;
+  margin-top: 0.75rem;
+  background: #fff;
+}
+
+.tarjeta-turno .cabecera {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.chip {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.resena button {
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  border: none;
+  border-radius: 999px;
+  background: #0e6ba8;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.resena button:hover {
+  background: #094c75;
+}
+
+.resena p {
+  margin-top: 0.35rem;
+  background: #f6f8ff;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  border: 1px solid #dfe4ff;
+  color: #333;
 }
 
 .historia {

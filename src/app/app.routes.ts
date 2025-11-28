@@ -11,6 +11,7 @@ import { SeccionPacientes } from './components/seccion-pacientes/seccion-pacient
 import { puedeEntrarAdmin } from './guards/admin.guard';
 import { puedeEntrar } from './guards/auth.guard';
 import { puedeEntrarEspecialista } from './guards/especialista.guard';
+import { Informes } from './components/informes/informes';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'inicio' },
@@ -23,5 +24,6 @@ export const routes: Routes = [
   { path: 'pacientes', component: SeccionPacientes, canActivate: [puedeEntrarEspecialista], title: 'Clinica Online - Pacientes' },
   { path: 'usuarios', component: SeccionUsuarios, canActivate: [puedeEntrarAdmin], title: 'Clinica Online - Usuarios' },
   { path: 'turnos', component: TurnosAdmin, canActivate: [puedeEntrarAdmin], title: 'Clinica Online - Turnos' },
+  { path: 'informes', component: Informes, canActivate: [puedeEntrarAdmin], title: 'Clinica Online - Informes' },
   { path: '**', redirectTo: 'inicio' }
 ];
