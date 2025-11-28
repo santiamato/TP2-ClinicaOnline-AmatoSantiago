@@ -29,6 +29,24 @@ import { DeshabilitarSiDirective } from '../../shared/directives/deshabilitar-si
       state('out', style({ transform: 'translateX(0) scale(1)' })),
       transition('in => out', animate('120ms ease-in')),
       transition('out => in', animate('320ms ease-out'))
+    ]),
+    trigger('pageSlideDown', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-40px)' }),
+        animate('450ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('250ms ease-in', style({ opacity: 0, transform: 'translateY(20px)' }))
+      ])
+    ]),
+    trigger('pageFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('600ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('250ms ease-in', style({ opacity: 0 }))
+      ])
     ])
   ]
 })

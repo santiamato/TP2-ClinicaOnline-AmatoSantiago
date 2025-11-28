@@ -1,4 +1,4 @@
-<section class="mis-turnos" *ngIf="rol; else sinRol">
+<section class="mis-turnos" *ngIf="rol; else sinRol" [@pageSlideDown] [@pageFade]>
   <h2>Mis turnos</h2>
   <div class="filtro" *ngIf="lista.length">
     <input type="text" [(ngModel)]="filtro" placeholder="Filtrar por especialidad o nombre" />

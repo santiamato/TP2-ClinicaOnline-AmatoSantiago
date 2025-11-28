@@ -1,3 +1,9 @@
+.perfil-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .perfil .tarjeta {
   background: #fff;
   border-radius: 12px;
