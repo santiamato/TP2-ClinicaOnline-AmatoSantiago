@@ -1,59 +1,108 @@
-# TP2ClinicaOnlineAmatoSantiago
+# Clinica Online - Santa Ana
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
+Aplicacion web construida con Angular para gestionar la clinica Santa Ana. Permite a pacientes, especialistas y administradores manejar turnos, historias clinicas y infrmes
 
-## Development server
+## Sobre la clinica
 
-To start a local development server, run:
+La Clinica Santa Ana cuenta con seis consultorios, dos laboratorios y un sector administrativo que atiende de lunes a viernes de 8 a 19 hs y sabados hasta las 14 hs. El sitio replica este funcionamiento: centraliza la solicitud de turnos, el registro de especialistas/pacientes y la visualizacion de historias clinicas. Cada turno dura al menos 30 minutos y puede involucrar profesionales con multiples especialidades, por lo que la plataforma ofrece filtros por profesional o especialidad
 
-```bash
-ng serve
-```
+## Roles y formas de acceso
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Rol: Paciente
+## Accesos permitidos:
 
-## Code scaffolding
+Mi perfil (/mi-perfil)
+Mis turnos (/mis-turnos)
+Solicitar turno (/solicitar-turno)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
+## Rol: Especialista
+## Accesos permitidos:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Su perfil, incluyendo la gestión de disponibilidad
+Mis turnos (panel exclusivo de especialista)
+Sección Pacientes (/pacientes)
 
-```bash
-ng generate --help
-```
 
-## Building
+## Rol: Administrador
+## Accesos permitidos:
 
-To build the project run:
+Todo lo que puede ver un Paciente y un Especialista
+Sección de Usuarios (/usuarios)
+Turnos globales (/turnos)
+Informes (/informes)
+Solicitar turno para terceros
 
-```bash
-ng build
-```
+## Pantallas y secciones
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Inicio
+Pagina publica con hero de bienvenida, descripcion general de la clinica y tarjetas que resaltan la atencion humana, los turnos online y los profesionales disponibles.
 
-## Running unit tests
+### Registro 
+Permite crear cuentas de:
+- **Pacientes**: formulario con datos personales, obra social, dos imagenes obligatorias y control reCAPTCHA.
+- **Especialistas**: seleccion y alta de especialidades (con opcion de agregar nuevas), carga de foto y aviso de aprobacion pendiente por un administrador.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Login 
+Formulario reactivo con validaciones y mensajes claros, mas accesos rapidos precargados para usuarios demo (pacientes, especialistas y administrador).
 
-```bash
-ng test
-```
+### Mi perfil 
+- **Pacientes**: visualizan datos personales en tarjetas animadas, galeria de imagenes y su historia clinica completa.
+- **Especialistas**: administran disponibilidad por especialidad mediante una matriz dia/horario y consultan su informacion basica.
+- **Administradores**: revisan datos personales basicos.
 
-## Running end-to-end tests
+### Mis turnos 
+Listado filtrable con animaciones:
+- **Pacientes**: cancelar turnos, completar encuestas y calificar la atencion recibida.
+- **Especialistas**: aceptar o rechazar turnos, registrar resenas y cargar historia clinica (altura, peso, temperatura, presion y hasta tres datos extra), lo que genera registros en Historias Clinicas.
 
-For end-to-end (e2e) testing, run:
+### Solicitar turno 
+Flujo paso a paso:
+1. Elegir profesional (con foto).
+2. Seleccionar especialidad.
+3. Elegir dia disponible (segun disponibilidad cargada o horarios base).
+4. Seleccionar horario libre.
+5. Confirmar el turno.  
+Los administradores pueden escoger cualquier paciente desde un desplegable inicial para agendar en su nombre.
 
-```bash
-ng e2e
-```
+### Seccion Pacientes 
+Panel donde cada especialista ve la lista de pacientes atendidos y accede a sus historias clinicas con detalles de signos vitales y notas extra.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Seccion Usuarios 
+Herramienta integral de gestion:
+- Buscador por nombre, mail o rol y descarga de Excel (`usuarios.xlsx`) con toda la nomina.
+- Toggle para aprobar especialistas.
+- Formularios para crear pacientes, especialistas y administradores (subida de imagenes, alta en Supabase Auth, sincronizacion de especialidades).
+- Consulta de historia clinica por paciente dentro de la misma pantalla.
 
-## Additional Resources
+### Turnos 
+Vista consolidada de todos los turnos de la clinica. Permite filtrarlos por especialidad o especialista y cancelarlos ingresando un motivo administrativo.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Informes 
+Dashboard analitico:
+- Graficos con Chart.js (turnos por especialidad y por dia).
+- Comparativas de turnos solicitados/finalizados por medico dentro de un rango de fechas configurable.
+- Tabla con el log de ingresos (usuario, rol, fecha y hora).
+- Exportacion completa del dashboard a PDF mediante html2canvas + jsPDF.
+
+## Navegacion 
+
+1. **Registro e ingreso:** los usuarios nuevos se registran segun su rol y validan el correo; los especialistas quedan pendientes de aprobacion administrativa.
+2. **Gestion diaria:**
+   - Pacientes reservan turnos desde solicitar turno, los siguen en mis turnos y revisan su historial en mi perfil.
+   - Especialistas configuran disponibilidad en mi perfil, atienden y registran historias desde mis turnos o consultan pacientes anteriores en pacientes.
+   - Administradores controlan usuarios, turnos y reportes desde las secciones exclusivas (usuarios, turnos, informes).
+<img width="1882" height="912" alt="image" src="https://github.com/user-attachments/assets/5ae17913-9d19-4f20-844d-c2d54892c882" />
+<img width="1893" height="915" alt="image" src="https://github.com/user-attachments/assets/c6f6a29e-05cd-4807-92ca-552e0289b1ec" />
+<img width="1444" height="914" alt="image" src="https://github.com/user-attachments/assets/0e8fbe51-82c7-4a9f-afe8-b4b563e1b44c" />
+<img width="1428" height="915" alt="image" src="https://github.com/user-attachments/assets/05c77aba-b1af-40fb-bfac-7ded78c8f041" />
+<img width="1319" height="914" alt="image" src="https://github.com/user-attachments/assets/8f2de3e9-e686-4a23-9569-41c31c79ff69" />
+<img width="1204" height="913" alt="image" src="https://github.com/user-attachments/assets/e92bb6b3-0f3e-455f-a568-aa551946c083" />
+<img width="1336" height="914" alt="image" src="https://github.com/user-attachments/assets/cc44b48f-9c54-4a40-b3f2-d82d7704c08d" />
+
+
+
+
+
+
+
