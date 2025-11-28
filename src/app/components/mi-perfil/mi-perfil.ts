@@ -9,7 +9,7 @@ import { HistoriasClinicasService, HistoriaClinica } from '../../servicios/histo
 import { InicialesPipe } from '../../shared/pipes/iniciales.pipe';
 import { ReemplazoPipe } from '../../shared/pipes/reemplazo.pipe';
 import { SombraAlPasarDirective } from '../../shared/directives/sombra-hover.directive';
-import { EscalaAlPasarDirective } from '../../shared/directives/escala-hover.directive';
+import { DestacarAlPasarDirective } from '../../shared/directives/escala-hover.directive';
 import jsPDF from 'jspdf';
 
 type RegistroDias = Record<DiaSemana, string[]>;
@@ -18,7 +18,7 @@ type MapaDisponibilidad = Record<string, RegistroDias>;
 @Component({
   standalone: true,
   selector: 'app-mi-perfil',
-  imports: [CommonModule, InicialesPipe, ReemplazoPipe, SombraAlPasarDirective, EscalaAlPasarDirective],
+  imports: [CommonModule, InicialesPipe, ReemplazoPipe, SombraAlPasarDirective, DestacarAlPasarDirective],
   templateUrl: './mi-perfil.html',
   styleUrls: ['./mi-perfil.css'],
   animations: [

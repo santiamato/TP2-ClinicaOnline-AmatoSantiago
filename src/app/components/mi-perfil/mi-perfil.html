@@ -1,10 +1,9 @@
-<div class="perfil-wrapper" [@pageSlideDown] [@pageFade]>
 <section class="perfil" *ngIf="usuario() as u">
   <div class="tarjeta" appSombraAlPasar>
     <div class="principal">
       <img class="foto" [src]="fotoPrincipal(u)" alt="Foto de perfil" appEscalaAlPasar />
       <div class="info">
-        <h1>{{ u.nombre }} {{ u.apellido }} <small class="siglas"></small></h1>
+        <h1>{{ u.nombre }} {{ u.apellido }} <small class="siglas">{{ (u.nombre + ' ' + u.apellido) | iniciales }}</small></h1>
         <p class="rol">Rol: {{ u.rol | titlecase }}</p>
         <p *ngIf="u.rol!=='paciente'"><strong>Correo:</strong> {{ u.mail }}</p>
         <p *ngIf="u.rol!=='paciente'"><strong>DNI:</strong> {{ u.dni }}</p>
@@ -162,4 +161,3 @@
     <p class="aviso">Eleg&iacute; una especialidad para configurar sus dias disponibles.</p>
   </ng-template>
 </section>
-</div>
